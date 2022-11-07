@@ -15,7 +15,7 @@ app.use(express.json())
 app.use(cors())
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const { query } = require('express')
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.lgdlxzl.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -52,10 +52,12 @@ async function run() {
             const result = await cursor.toArray();
             res.send(result);
             // console.log(result)
-
-            // const catagoryCourses = courses.filter(c => c.catagory === req.params.id);
-            // res.send(catagoryCourses)
-
+        })
+        app.get('/course/:id', async (req, res) => {
+            const CatagoryId = req.params.id;
+            const query = { _id: ObjectId(CatagoryId) }
+            const result = await coursesCollection.findOne(query);
+            res.send(result);
         })
 
     }
@@ -86,14 +88,15 @@ run().catch(err => console.log(err))
 //         res.send(catagoryCourses)
 //     }
 // })
-app.get('/course/:id', (req, res) => {
-    const CatagoryId = req.params.id;
+// app.get('/course/:id', (req, res) => {
+//     const CatagoryId = req.params.id;
+//     console.log(CatagoryId)
 
 
-    const catagoryCourse = courses.find(c => c.id === req.params.id);
-    res.send(catagoryCourse)
+//     const catagoryCourse = courses.find(c => c.id === req.params.id);
+//     res.send(catagoryCourse)
 
-})
+// })
 
 
 app.listen(port, () => {
